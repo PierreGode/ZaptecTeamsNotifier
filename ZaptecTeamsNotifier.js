@@ -4,7 +4,7 @@ require('dotenv').config();
 // Get configuration from environment variables
 const USERNAME = process.env.ZAPTEC_USERNAME;
 const PASSWORD = process.env.ZAPTEC_PASSWORD;
-const TEAMS_WEBHOOK_URL = process.env.TEAMS_WEBHOOK_URL;
+const webhookUrl = process.env.TEAMS_WEBHOOK_URL;
 
 let bearerToken;
 let previousChargerStatuses = {};
