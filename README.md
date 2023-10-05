@@ -1,6 +1,22 @@
 # ZaptecTeamsNotifier
 Send notifications of availible Zaptec chargers that are availible in your Zaptec account to Teams
 Create a .env file: At the root of your project, create a file named .env
+
+Clone this repository
+```
+https://github.com/PierreGode/ZaptecTeamsNotifier.git
+```
+```
+cd ZaptecTeamsNotifier
+```
+```
+npm install axios
+```
+
+```
+npm install dotenv
+```
+
 ```
 touch .env
 ```
@@ -25,3 +41,9 @@ Add .env to .gitignore: This is crucial. The .gitignore file tells Git which fil
 .env
 ```
 By doing this, even if you accidentally try to commit the .env file, Git will ignore it, ensuring that your secrets remain local and are not exposed in the remote repository.
+
+Running the Notifier
+Once you've set up the configurations, run the notifier using:
+```
+node node.js
+```
