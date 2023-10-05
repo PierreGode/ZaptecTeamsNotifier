@@ -96,7 +96,7 @@ async function checkChargerAvailability() {
 
 async function notifyTeams(message) {
     const currentHour = new Date().getHours();
-    if (currentHour >= 17 || currentHour < 6) {
+    if (currentHour >= 16 || currentHour < 6) {
         console.log("Skipped Teams notification due to current time restrictions.");
         return;
     }
