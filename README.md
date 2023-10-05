@@ -1,4 +1,7 @@
 # ZaptecTeamsNotifier
+
+![image](https://github.com/PierreGode/ZaptecTeamsNotifier/assets/8579922/6140f82d-a815-4175-88ae-9ca69a14af5f)
+
 Send notifications of availible Zaptec chargers that are availible in your Zaptec account to Teams
 Create a .env file: At the root of your project, create a file named .env
 
