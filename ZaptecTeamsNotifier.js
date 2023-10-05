@@ -37,7 +37,7 @@ async function checkChargerAvailability() {
     const notifications = [];
    const statusIcons = {
         1: "✅",
-        3: "🔌",
+        3: "⚡",
         5: "🔋"
     };
 
