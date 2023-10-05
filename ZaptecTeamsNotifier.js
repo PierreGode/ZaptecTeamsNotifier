@@ -36,9 +36,9 @@ async function checkChargerAvailability() {
 
     const notifications = [];
    const statusIcons = {
-        1: "![Free](✅)",
-        3: "![Charging](🔌)",
-        5: "![Charge Complete](🔋)"
+        1: "✅",
+        3: "🔌",
+        5: "🔋"
     };
 
     try {
