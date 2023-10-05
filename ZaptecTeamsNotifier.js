@@ -36,9 +36,9 @@ async function checkChargerAvailability() {
 
     const notifications = [];
    const statusIcons = {
-        1: "![Free](https://emoji.slack-edge.com/T026162CF/zaptec-free/b9855e689e1fe92f.png)",
-        3: "![Charging](https://emoji.slack-edge.com/T026162CF/zaptec-charging/a4ea5bbb8c64210b.png)",
-        5: "![Charge Complete](https://emoji.slack-edge.com/T026162CF/zaptec-charge-complete/36190d8a3522b9f4.png)"
+        1: "![Free](✅)",
+        3: "![Charging](🔌)",
+        5: "![Charge Complete](🔋)"
     };
 
     try {
