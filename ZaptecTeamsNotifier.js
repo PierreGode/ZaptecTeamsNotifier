@@ -86,8 +86,8 @@ async function checkChargerAvailability() {
         previousFreeChargerCount = freeChargersCount;
 
         for (const message of notifications) {
-            console.log(message + "\n" + allChargerStatuses);
-            await notifyTeams(message + "\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
+            console.log(message + "\n\n" + allChargerStatuses);
+            await notifyTeams(message + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
         }
     } catch (error) {
         console.error("Failed to fetch charger data:", error);
