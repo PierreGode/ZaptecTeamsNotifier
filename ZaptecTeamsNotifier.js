@@ -56,32 +56,33 @@ async function checkChargerAvailability() {
         let freeChargersCount = 0;
         let chargingStatusChanged = false;
 
-        for (let charger of chargers) {
-            const chargerName = charger.Name.replace(" Tobii", "");
-            const previousStatus = previousChargerStatuses[charger.Id];
+for (let charger of chargers) {
+    const chargerName = charger.Name.replace(" Tobii", "");
+    const previousStatus = previousChargerStatuses[charger.Id];
 
-            allChargerStatuses += `${statusIcons[charger.OperatingMode]} `;
+    allChargerStatuses += `${statusIcons[charger.OperatingMode]} `;
 
-            if (previousStatus !== charger.OperatingMode) {
-                if (charger.OperatingMode == 1) {
-                    freeChargersCount++;
-                    notifications.push(`${statusIcons[1]} ${chargerName} is available!`);
-                } else if (charger.OperatingMode == 5) {
-                    notifications.push(`${statusIcons[5]} ${chargerName} has stopped charging.`);
-                } else if (charger.OperatingMode == 3) {
-                    chargingStatusChanged = true;
-                }
-
-                previousChargerStatuses[charger.Id] = charger.OperatingMode;
-            } else if (charger.OperatingMode == 1) {
-                freeChargersCount++;
-            }
+    if (previousStatus !== charger.OperatingMode) {
+        if (charger.OperatingMode == 1) {
+            freeChargersCount++;
+            notifications.push(`${statusIcons[1]} ${chargerName} is available!`);
+        } else if (charger.OperatingMode == 5) {
+            notifications.push(`${statusIcons[5]} ${chargerName} has stopped charging.`);
+        } else if (charger.OperatingMode == 3) {
+            chargingStatusChanged = true; // set flag to true but don't push a notification yet
         }
 
-         if (previousFreeChargerCount > freeChargersCount) {
-             const summaryMessage = `${statusIcons[1]} ${freeChargersCount} charger(s) free.`;
-            notifications.push(summaryMessage);
-        }
+        previousChargerStatuses[charger.Id] = charger.OperatingMode;
+    } else if (charger.OperatingMode == 1) {
+        freeChargersCount++;
+    }
+}
+
+// If the charging status has changed and the count of free chargers has also decreased
+if (chargingStatusChanged && previousFreeChargerCount > freeChargersCount) {
+    const summaryMessage = `${statusIcons[1]} ${freeChargersCount} charger(s) free.`;
+    notifications.push(summaryMessage);
+}
 
 
         previousFreeChargerCount = freeChargersCount;
