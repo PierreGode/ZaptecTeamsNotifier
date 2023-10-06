@@ -36,12 +36,17 @@ async function refreshBearerToken() {
 async function checkChargerAvailability() {
     console.log("Checking charger availability...");
 
-    const notifications = [];
     const statusIcons = {
         1: "✅",
         3: "⚡",
         5: "🔋"
     };
+
+    let availableChargers = [];
+    let completedChargers = [];
+    let allChargerStatuses = "";
+    let freeChargersCount = 0;
+    let chargingStatusChanged = false;
 
     try {
         const response = await axios.get("https://api.zaptec.com/api/chargers", {
@@ -54,10 +59,6 @@ async function checkChargerAvailability() {
         const chargers = response.data.Data;
         console.log(`Found ${chargers.length} chargers.`);
 
-        let allChargerStatuses = "";
-        let freeChargersCount = 0;
-        let chargingStatusChanged = false;
-
         for (let charger of chargers) {
             const chargerName = charger.Name.replace(" Tobii", "");
             const previousStatus = previousChargerStatuses[charger.Id];
@@ -67,9 +68,9 @@ async function checkChargerAvailability() {
             if (previousStatus !== charger.OperatingMode) {
                 if (charger.OperatingMode == 1) {
                     freeChargersCount++;
-                    notifications.push(`${statusIcons[1]} ${chargerName} is available!`);
+                    availableChargers.push(chargerName);
                 } else if (charger.OperatingMode == 5) {
-                    notifications.push(`${statusIcons[5]} ${chargerName} has stopped charging.`);
+                    completedChargers.push(chargerName);
                 } else if (charger.OperatingMode == 3) {
                     chargingStatusChanged = true;
                 }
@@ -82,21 +83,29 @@ async function checkChargerAvailability() {
 
         if (chargingStatusChanged && previousFreeChargerCount > freeChargersCount) {
             let summaryMessage = freeChargersCount === 0 ? "❌ 0 chargers free" : `${statusIcons[1]} ${freeChargersCount} charger(s) free.`;
-            notifications.push(summaryMessage);
+            console.log(summaryMessage + "\n\n" + allChargerStatuses);
+            await notifyTeams(summaryMessage + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
         }
 
-        previousFreeChargerCount = freeChargersCount;
-
-        // Notify only if it's not the initial run
         if (!initialRun) {
-            for (const message of notifications) {
-                console.log(message + "\n\n" + allChargerStatuses);
+            if (availableChargers.length) {
+                const message = `${statusIcons[1]} ${availableChargers.join(", ")} is/are available!`;
+                console.log(message);
+                await notifyTeams(message + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
+            }
+
+            if (completedChargers.length) {
+                const message = `${statusIcons[5]} ${completedChargers.join(", ")} has/have stopped charging.`;
+                console.log(message);
                 await notifyTeams(message + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
             }
         } else {
             console.log("Initial run, notifications are silenced.");
-            initialRun = false; // Set to false after the first run
+            initialRun = false;  // Reset the flag after the initial run
         }
+
+        previousFreeChargerCount = freeChargersCount;
+
     } catch (error) {
         console.error("Failed to fetch charger data:", error);
     }
