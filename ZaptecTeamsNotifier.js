@@ -17,12 +17,13 @@ async function refreshBearerToken() {
     try {
         const response = await axios.post("https://api.zaptec.com/oauth/token",
             `grant_type=password&username=${encodeURIComponent(USERNAME)}&password=${encodeURIComponent(PASSWORD)}`, {
-            headers: {
-                "accept": "application/json",
-                "content-type": "application/x-www-form-urlencoded",
-                "Authorization": `Basic ${encodedCredentials}`
+                headers: {
+                    "accept": "application/json",
+                    "content-type": "application/x-www-form-urlencoded",
+                    "Authorization": `Basic ${encodedCredentials}`
+                }
             }
-        });
+        );
 
         bearerToken = response.data.access_token;
         console.log("Successfully refreshed Zaptec bearer token.");
@@ -35,7 +36,7 @@ async function checkChargerAvailability() {
     console.log("Checking charger availability...");
 
     const notifications = [];
-   const statusIcons = {
+    const statusIcons = {
         1: "✅",
         3: "⚡",
         5: "🔋"
@@ -52,7 +53,7 @@ async function checkChargerAvailability() {
         const chargers = response.data.Data;
         console.log(`Found ${chargers.length} chargers.`);
 
-        let allChargerStatuses = ""; 
+        let allChargerStatuses = "";
         let freeChargersCount = 0;
         let chargingStatusChanged = false;
 
@@ -69,21 +70,20 @@ async function checkChargerAvailability() {
                 } else if (charger.OperatingMode == 5) {
                     notifications.push(`${statusIcons[5]} ${chargerName} has stopped charging.`);
                 } else if (charger.OperatingMode == 3) {
-                    chargingStatusChanged = true; // set flag to true but don't push a notification yet
+                    chargingStatusChanged = true;
                 }
 
-               previousChargerStatuses[charger.Id] = charger.OperatingMode;
-               } else if (charger.OperatingMode == 1) {
-                  freeChargersCount++;
-               }
-           }
+                previousChargerStatuses[charger.Id] = charger.OperatingMode;
+            } else if (charger.OperatingMode == 1) {
+                freeChargersCount++;
+            }
+        }
 
-// If the charging status has changed and the count of free chargers has also decreased
-if (chargingStatusChanged && previousFreeChargerCount > freeChargersCount) {
-    const summaryMessage = `${statusIcons[1]} ${freeChargersCount} charger(s) free.`;
-    notifications.push(summaryMessage);
-}
-
+        // If the charging status has changed and the count of free chargers has also decreased
+        if (chargingStatusChanged && previousFreeChargerCount > freeChargersCount) {
+            const summaryMessage = `${statusIcons[1]} ${freeChargersCount} charger(s) free.`;
+            notifications.push(summaryMessage);
+        }
 
         previousFreeChargerCount = freeChargersCount;
 
