@@ -81,7 +81,14 @@ async function checkChargerAvailability() {
 
         // If the charging status has changed and the count of free chargers has also decreased
         if (chargingStatusChanged && previousFreeChargerCount > freeChargersCount) {
-            const summaryMessage = `${statusIcons[1]} ${freeChargersCount} charger(s) free.`;
+            let summaryMessage = "";
+
+            if (freeChargersCount === 0) {
+                summaryMessage = "❌ 0 chargers free";
+            } else {
+                summaryMessage = `${statusIcons[1]} ${freeChargersCount} charger(s) free.`;
+            }
+
             notifications.push(summaryMessage);
         }
 
@@ -95,6 +102,7 @@ async function checkChargerAvailability() {
         console.error("Failed to fetch charger data:", error);
     }
 }
+
 
 async function notifyTeams(message) {
     const currentHour = new Date().getHours();
