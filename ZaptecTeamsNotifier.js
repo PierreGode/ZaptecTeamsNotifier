@@ -67,9 +67,9 @@ async function checkChargerAvailability() {
                     freeChargersCount++;
                     notifications.push(`${statusIcons[1]} ${chargerName} is available!`);
                 } else if (charger.OperatingMode == 5) {
-                   notifications.push(`${statusIcons[5]} ${chargerName} has stopped charging.`);
+                    notifications.push(`${statusIcons[5]} ${chargerName} has stopped charging.`);
                 } else if (charger.OperatingMode == 3) {
-                   chargingStatusChanged = true; // set flag to true but don't push a notification yet
+                    chargingStatusChanged = true; // set flag to true but don't push a notification yet
                 }
 
                previousChargerStatuses[charger.Id] = charger.OperatingMode;
