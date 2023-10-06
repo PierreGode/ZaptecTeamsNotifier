@@ -9,6 +9,7 @@ const TEAMS_WEBHOOK_URL = process.env.TEAMS_WEBHOOK_URL;
 let bearerToken;
 let previousChargerStatuses = {};
 let previousFreeChargerCount = 0;
+let initialRun = true; // Added to determine if it's the first run
 
 async function refreshBearerToken() {
     console.log("Attempting to refresh Zaptec bearer token...");
@@ -79,30 +80,27 @@ async function checkChargerAvailability() {
             }
         }
 
-        // If the charging status has changed and the count of free chargers has also decreased
         if (chargingStatusChanged && previousFreeChargerCount > freeChargersCount) {
-            let summaryMessage = "";
-
-            if (freeChargersCount === 0) {
-                summaryMessage = "❌ 0 chargers free";
-            } else {
-                summaryMessage = `${statusIcons[1]} ${freeChargersCount} charger(s) free.`;
-            }
-
+            let summaryMessage = freeChargersCount === 0 ? "❌ 0 chargers free" : `${statusIcons[1]} ${freeChargersCount} charger(s) free.`;
             notifications.push(summaryMessage);
         }
 
         previousFreeChargerCount = freeChargersCount;
 
-        for (const message of notifications) {
-            console.log(message + "\n\n" + allChargerStatuses);
-            await notifyTeams(message + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
+        // Notify only if it's not the initial run
+        if (!initialRun) {
+            for (const message of notifications) {
+                console.log(message + "\n\n" + allChargerStatuses);
+                await notifyTeams(message + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
+            }
+        } else {
+            console.log("Initial run, notifications are silenced.");
+            initialRun = false; // Set to false after the first run
         }
     } catch (error) {
         console.error("Failed to fetch charger data:", error);
     }
 }
-
 
 async function notifyTeams(message) {
     const currentHour = new Date().getHours();
