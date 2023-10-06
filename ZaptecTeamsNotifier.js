@@ -78,10 +78,11 @@ async function checkChargerAvailability() {
             }
         }
 
-        if (chargingStatusChanged && previousFreeChargerCount !== freeChargersCount) {
-            const summaryMessage = `${statusIcons[1]} ${freeChargersCount} charger(s) free.`;
+         if (previousFreeChargerCount > freeChargersCount) {
+             const summaryMessage = `${statusIcons[1]} ${freeChargersCount} charger(s) free.`;
             notifications.push(summaryMessage);
         }
+
 
         previousFreeChargerCount = freeChargersCount;
 
