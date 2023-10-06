@@ -89,13 +89,15 @@ async function checkChargerAvailability() {
 
         if (!initialRun) {
             if (availableChargers.length) {
-                const message = `${statusIcons[1]} ${availableChargers.join(", ")} is/are available!`;
+                const verb = availableChargers.length === 1 ? "is" : "are";
+                const message = `${statusIcons[1]} ${availableChargers.join(", ")} ${verb} available!`;
                 console.log(message);
                 await notifyTeams(message + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
             }
 
             if (completedChargers.length) {
-                const message = `${statusIcons[5]} ${completedChargers.join(", ")} has/have stopped charging.`;
+                const verb = completedChargers.length === 1 ? "has" : "have";
+                const message = `${statusIcons[5]} ${completedChargers.join(", ")} ${verb} stopped charging.`;
                 console.log(message);
                 await notifyTeams(message + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
             }
