@@ -1,5 +1,6 @@
 const axios = require("axios");
 require('dotenv').config();
+const config = require('./config');
 
 // Get configuration from environment variables
 const USERNAME = process.env.ZAPTEC_USERNAME;
@@ -115,7 +116,7 @@ async function checkChargerAvailability() {
 
 async function notifyTeams(message) {
     const currentHour = new Date().getHours();
-    if (currentHour >= 16 || currentHour < 6) {
+    if (currentHour >= config.startSilentHour || currentHour < config.endSilentHour) {
         console.log("Skipped Teams notification due to current time restrictions.");
         return;
     }
