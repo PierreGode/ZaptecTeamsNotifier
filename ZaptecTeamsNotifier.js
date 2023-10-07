@@ -9,7 +9,7 @@ const TEAMS_WEBHOOK_URL = process.env.TEAMS_WEBHOOK_URL;
 let bearerToken;
 let previousChargerStatuses = {};
 let previousFreeChargerCount = 0;
-let initialRun = false; // Added to determine if it's the first run
+let initialRun = true; // Added to determine if it's the first run
 
 async function refreshBearerToken() {
     console.log("Attempting to refresh Zaptec bearer token...");
@@ -115,7 +115,7 @@ async function checkChargerAvailability() {
 
 async function notifyTeams(message) {
     const currentHour = new Date().getHours();
-    if (currentHour >= 18 || currentHour < 6) {
+    if (currentHour >= 16 || currentHour < 6) {
         console.log("Skipped Teams notification due to current time restrictions.");
         return;
     }
