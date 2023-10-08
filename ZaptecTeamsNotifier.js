@@ -113,9 +113,9 @@ async function checkChargerAvailability() {
         console.error("Failed to fetch charger data:", error);
     }
 }
-
+console.log("test2");
 async function notifyTeams(message) {
-    console.log("test2");
+    
     const currentHour = new Date().getHours();
     const currentDay = new Date().toLocaleString('en-us', { weekday: 'long' });
 
