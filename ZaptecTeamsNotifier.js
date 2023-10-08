@@ -115,13 +115,13 @@ async function checkChargerAvailability() {
 }
 
 async function notifyTeams(message) {
-    const currentHour = new Date().getHours();
-    const currentDay = new Date().toLocaleString('en-us', { weekday: 'long' });
+const currentHour = new Date().getHours();
+const currentDay = new Date().toLocaleString('en-us', { weekday: 'long' });
 
-    if (currentHour >= config.startSilentHour || currentHour < config.endSilentHour || config.silentDays.includes(currentDay)) {
-        console.log("Skipped Teams notification due to current time or day restrictions.");
-        return;
-    }
+if (currentHour >= config.startSilentHour || currentHour < config.endSilentHour || config.silentDays.includes(currentDay)) {
+    console.log("Skipped Teams notification due to current time or day restrictions.");
+    return;
+}
 
     const payload = {
         "@type": "MessageCard",
