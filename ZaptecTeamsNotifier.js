@@ -106,7 +106,7 @@ async function checkChargerAvailability() {
             console.log("Initial run, notifications are silenced.");
             initialRun = false;  // Reset the flag after the initial run
         }
-
+        console.log("test1");
         previousFreeChargerCount = freeChargersCount;
 
     } catch (error) {
@@ -115,12 +115,14 @@ async function checkChargerAvailability() {
 }
 
 async function notifyTeams(message) {
+    console.log("test2");
     const currentHour = new Date().getHours();
     const currentDay = new Date().toLocaleString('en-us', { weekday: 'long' });
 
     console.log(`Attempting to notify Teams. Current time: ${new Date().toLocaleTimeString()} and current day: ${currentDay}`);
 
     if (currentHour >= config.startSilentHour || currentHour < config.endSilentHour || config.silentDays.includes(currentDay)) {
+        console.log("test3");
         console.log(`Skipped Teams notification due to current time or day restrictions. Silent hours: ${config.startSilentHour}:00 - ${config.endSilentHour}:00, Silent days: ${config.silentDays.join(", ")}`);
         return;
     }
