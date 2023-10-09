@@ -5,6 +5,9 @@
 
 ![image](https://github.com/PierreGode/ZaptecTeamsNotifier/assets/8579922/6140f82d-a815-4175-88ae-9ca69a14af5f)
 
+![image](https://github.com/PierreGode/ZaptecTeamsNotifier/assets/8579922/88e271a3-39b9-4cc6-b285-85ff825259e9)
+
+
 Send notifications of availible Zaptec chargers that are availible in your Zaptec account to Teams
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J2EARPK)
