@@ -58,4 +58,4 @@ Once you've set up the configurations, run the notifier using:
 ```
 node node.js
 ```
-@Createde By Pierre Gode
+@Created By Pierre Gode
