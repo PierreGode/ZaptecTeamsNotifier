@@ -84,7 +84,7 @@ async function checkChargerAvailability() {
         }
 
         if (chargingStatusChanged && previousFreeChargerCount > freeChargersCount) {
-            let summaryMessage = freeChargersCount === 0 ? "❌ 0 chargers free" : `${statusIcons[1]} ${freeChargersCount} charger(s) free.`;
+            let summaryMessage = freeChargersCount === 0 ? "❌ 0 chargers available" : `${statusIcons[1]} ${freeChargersCount} charger(s) available.`;
             console.log(summaryMessage + "\n\n" + allChargerStatuses);
             await notifyTeams(summaryMessage + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
         }
