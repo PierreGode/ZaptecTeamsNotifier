@@ -7,6 +7,7 @@ const config = require('./config');
 const USERNAME = process.env.ZAPTEC_USERNAME;
 const PASSWORD = process.env.ZAPTEC_PASSWORD;
 const TEAMS_WEBHOOK_URL = process.env.TEAMS_WEBHOOK_URL;
+const COMPANY_NAME = process.env.COMPANY_NAME;
 
 let bearerToken;
 let previousChargerStatuses = {};
@@ -75,7 +76,7 @@ async function checkChargerAvailability() {
         logWithTimestamp(`Found ${chargers.length} chargers.`);
 
     for (let charger of chargers) {
-        const chargerName = charger.Name.replace(" Tobii", "");
+        const chargerName = charger.Name.replace(` ${COMPANY_NAME}`, "");
         const previousStatus = previousChargerStatuses[charger.Id];
 
         allChargerStatuses += `${statusIcons[charger.OperatingMode]} `;
