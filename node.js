@@ -9,16 +9,17 @@ const config = require('./config');
    
     console.log("Setting up intervals for checking charger availability, token refresh...");
 
+
     // Check charger availability every 3 minutes
     setInterval(async () => {
         await checkChargerAvailability();
-    }, config.Zaptechupdateinterval); // configure in config.js
+     }, config.zaptecUpdateInterval); // configure in config.js
 
     // Refresh Zaptec token every 24 hours
     setInterval(async () => {
         await refreshBearerToken();
-    }, 86400000); // 24 hours
+    }, config.zaptecTokenRefreshInterval); // 24 hours
 
-    console.log("Zaptec Teams Notifier is now running!");
+    console.log("Zaptec Slack Notifier is now running!");
 })();
 
