@@ -2,6 +2,7 @@ const {
     refreshBearerToken, 
     checkChargerAvailability,  
 } = require('./ZaptecTeamsNotifier.js');
+const config = require('./config');
 
 (async () => {
     console.log("Starting Zaptec Teams Notifier...");
