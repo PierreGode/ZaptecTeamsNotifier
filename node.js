@@ -20,6 +20,6 @@ const config = require('./config');
         await refreshBearerToken();
     }, config.zaptecTokenRefreshInterval); // 24 hours
 
-    console.log("Zaptec Slack Notifier is now running!");
+    console.log("Zaptec Teams Notifier is now running!");
 })();
 
