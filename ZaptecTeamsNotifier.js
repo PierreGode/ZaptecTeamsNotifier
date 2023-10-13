@@ -13,8 +13,13 @@ let previousChargerStatuses = {};
 let previousFreeChargerCount = 0;
 let initialRun = true; // Added to determine if it's the first run
 
+function logWithTimestamp(message) {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] ${message}`);
+}
+
 async function refreshBearerToken() {
-    console.log("Attempting to refresh Zaptec bearer token...");
+    logWithTimestamp("Attempting to refresh Zaptec bearer token...");
     const encodedCredentials = Buffer.from(`${USERNAME}:${PASSWORD}`).toString('base64');
 
     try {
@@ -29,14 +34,14 @@ async function refreshBearerToken() {
         );
 
         bearerToken = response.data.access_token;
-        console.log("Successfully refreshed Zaptec bearer token.");
+        logWithTimestamp("Successfully refreshed Zaptec bearer token.");
     } catch (error) {
         console.error("Failed to refresh Zaptec token:", error);
     }
 }
 
 async function checkChargerAvailability() {
-    console.log("Checking charger availability...");
+    logWithTimestamp("Checking charger availability...");
 
     const statusIcons = {
         1: "✅",
@@ -59,7 +64,7 @@ async function checkChargerAvailability() {
         });
 
         const chargers = response.data.Data;
-        console.log(`Found ${chargers.length} chargers.`);
+        logWithTimestamp(`Found ${chargers.length} chargers.`);
 
         for (let charger of chargers) {
             const chargerName = charger.Name.replace(" Tobii", "");
@@ -104,7 +109,7 @@ async function checkChargerAvailability() {
                 await notifyTeams(message + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
             }
         } else {
-            console.log("Initial run, notifications are silenced.");
+            logWithTimestamp("Initial run, notifications are silenced.");
             initialRun = false;  // Reset the flag after the initial run
         }
         previousFreeChargerCount = freeChargersCount;
@@ -119,10 +124,10 @@ async function notifyTeams(message) {
     const currentHour = new Date().getHours();
     const currentDay = new Date().toLocaleString('en-us', { weekday: 'long' });
 
-    console.log(`Attempting to notify Teams. Current time: ${new Date().toLocaleTimeString()} and current day: ${currentDay}`);
+    logWithTimestamp(`Attempting to notify Teams. Current time: ${new Date().toLocaleTimeString()} and current day: ${currentDay}`);
 
     if (currentHour >= config.startSilentHour || currentHour < config.endSilentHour || config.silentDays.includes(currentDay)) {
-        console.log(`Skipped Teams notification due to current time or day restrictions. Silent hours: ${config.startSilentHour}:00 - ${config.endSilentHour}:00, Silent days: ${config.silentDays.join(", ")}`);
+        logWithTimestamp(`Skipped Teams notification due to current time or day restrictions. Silent hours: ${config.startSilentHour}:00 - ${config.endSilentHour}:00, Silent days: ${config.silentDays.join(", ")}`);
         return;
     }
 
@@ -138,7 +143,7 @@ async function notifyTeams(message) {
 
     try {
         await axios.post(TEAMS_WEBHOOK_URL, payload);
-        console.log("Sent Teams notification:", message);
+        logWithTimestamp("Sent Teams notification:", message);
     } catch (error) {
         console.error("Failed to send Teams notification:", error);
     }
@@ -156,8 +161,7 @@ async function notifyTeams(message) {
         await refreshBearerToken().catch(err => console.error("Periodic Zaptec token refresh failed:", err));
     }, 86400000);
 
-    console.log("Setting up intervals for checking charger availability and token refresh...");
-    console.log("Zaptec Teams Notifier is now running!");
+    logWithTimestamp("Zaptec Teams Notifier is now running!");
 })();
 
 module.exports = {
