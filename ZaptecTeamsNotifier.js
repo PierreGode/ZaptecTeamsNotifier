@@ -12,7 +12,7 @@ const COMPANY_NAME = process.env.COMPANY_NAME;
 let bearerToken;
 let previousChargerStatuses = {};
 let previousFreeChargerCount = 0;
-let initialRun = config.silentStart; // true will silence the first run when starting the service. configure in config.js
+let initialRun = true;
 function logWithTimestamp(message) {
     const timeDate = new Date(new Date().toLocaleString('en-US', { timeZone: config.timeZone }));
     const hours = String(timeDate.getHours()).padStart(2, '0');
@@ -46,12 +46,33 @@ async function refreshBearerToken() {
 async function checkChargerAvailability() {
     logWithTimestamp("Checking charger availability...");
 
-    const statusIcons = {
-        1: "✅",
-        2: "⭕",
-        3: "⚡",
-        5: "🔋"
+    const statusIconsCircles = {
+        1: "🟢", // charger free to use
+        2: "🟠", // charger authorizing
+        3: "🟡", // charger in use, charging
+        5: "🔴" // charge complete
     };
+
+    const statusIconsSlack = {
+        1: ":z-free:",
+        2: ":z-auth:",
+        3: ":z-chrg:",
+        5: ":z-full:"
+    };
+
+    const statusIconsEmoji = {
+        1: "🔌", // charger free to use
+        2: "🔐", // charger authorizing
+        3: "🪫", // charger in use, charging
+        5: "🔋" // charge complete
+    };
+
+    if (config.iconSet == 1)
+        statusIcons = statusIconsCircles;
+    else if (config.iconSet == 2)
+        statusIcons = statusIconsEmoji;
+    else 
+        statusIcons = statusIconsSlack;
 
     let availableChargers = [];
     let completedChargers = [];
@@ -99,13 +120,17 @@ async function checkChargerAvailability() {
             await notifyTeams(summaryMessage + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
         }
 
-        if (!initialRun) {
+        if (initialRun && config.silentStart) {
+            logWithTimestamp("Initial run, notifications are silenced.");
+        }
+        else {
             if (availableChargers.length) {
                 const verb = availableChargers.length === 1 ? "is" : "are";
                 const message = `${statusIcons[1]} ${availableChargers.join(", ")} ${verb} available!`;
                 console.log(message);
-                await notifyTeams(message + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
+                await notifyTeams(message + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Slack notification:", err));
             }
+       
 
             if (completedChargers.length) {
                 const verb = completedChargers.length === 1 ? "has" : "have";
