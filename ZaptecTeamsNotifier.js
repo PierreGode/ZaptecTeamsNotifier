@@ -7,12 +7,11 @@ const config = require('./config');
 const USERNAME = process.env.ZAPTEC_USERNAME;
 const PASSWORD = process.env.ZAPTEC_PASSWORD;
 const TEAMS_WEBHOOK_URL = process.env.TEAMS_WEBHOOK_URL;
-const COMPANY_NAME = process.env.COMPANY_NAME;
 
 let bearerToken;
 let previousChargerStatuses = {};
 let previousFreeChargerCount = 0;
-let initialRun = false; // Added to determine if it's the first run
+let initialRun = true; // Added to determine if it's the first run
 
 function logWithTimestamp(message) {
     // Create a date object and adjust to Stockholm timezone
@@ -76,7 +75,7 @@ async function checkChargerAvailability() {
         logWithTimestamp(`Found ${chargers.length} chargers.`);
 
     for (let charger of chargers) {
-        const chargerName = charger.Name.replace(` ${COMPANY_NAME}`, "");
+        const chargerName = charger.Name.replace(" Tobii", "");
         const previousStatus = previousChargerStatuses[charger.Id];
 
         allChargerStatuses += `${statusIcons[charger.OperatingMode]} `;
