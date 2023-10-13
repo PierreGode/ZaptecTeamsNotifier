@@ -12,7 +12,7 @@ const config = require('./config');
     // Check charger availability every 3 minutes
     setInterval(async () => {
         await checkChargerAvailability();
-    }, config.Zaptechupdateinterval); // 3 minutes
+    }, config.Zaptechupdateinterval); // configure in config.js
 
     // Refresh Zaptec token every 24 hours
     setInterval(async () => {
