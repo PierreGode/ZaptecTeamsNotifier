@@ -45,6 +45,7 @@ async function checkChargerAvailability() {
 
     const statusIcons = {
         1: "✅",
+        2: "↺",
         3: "⚡",
         5: "🔋"
     };
@@ -66,27 +67,28 @@ async function checkChargerAvailability() {
         const chargers = response.data.Data;
         logWithTimestamp(`Found ${chargers.length} chargers.`);
 
-        for (let charger of chargers) {
-            const chargerName = charger.Name.replace(" Tobii", "");
-            const previousStatus = previousChargerStatuses[charger.Id];
+    for (let charger of chargers) {
+        const chargerName = charger.Name.replace(" Tobii", "");
+        const previousStatus = previousChargerStatuses[charger.Id];
 
-            allChargerStatuses += `${statusIcons[charger.OperatingMode]} `;
+        allChargerStatuses += `${statusIcons[charger.OperatingMode]} `;
 
-            if (previousStatus !== charger.OperatingMode) {
-                if (charger.OperatingMode == 1) {
-                    freeChargersCount++;
-                    availableChargers.push(chargerName);
-                } else if (charger.OperatingMode == 5) {
-                    completedChargers.push(chargerName);
-                } else if (charger.OperatingMode == 3) {
-                    chargingStatusChanged = true;
-                }
-
-                previousChargerStatuses[charger.Id] = charger.OperatingMode;
-            } else if (charger.OperatingMode == 1) {
+        if (previousStatus !== charger.OperatingMode) {
+            if (charger.OperatingMode == 1) {
                 freeChargersCount++;
+                availableChargers.push(chargerName);
+            } else if (charger.OperatingMode == 2) { 
+            } else if (charger.OperatingMode == 5) {
+                completedChargers.push(chargerName);
+            } else if (charger.OperatingMode == 3) {
+                chargingStatusChanged = true;
             }
+
+            previousChargerStatuses[charger.Id] = charger.OperatingMode;
+        } else if (charger.OperatingMode == 1) {
+            freeChargersCount++;
         }
+    }
 
         if (chargingStatusChanged && previousFreeChargerCount > freeChargersCount) {
             let summaryMessage = freeChargersCount === 0 ? "❌ 0 chargers available" : `${statusIcons[1]} ${freeChargersCount} charger(s) available.`;
