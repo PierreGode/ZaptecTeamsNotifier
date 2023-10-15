@@ -11,8 +11,9 @@ const COMPANY_NAME = process.env.COMPANY_NAME;
 
 let bearerToken;
 let previousChargerStatuses = {};
+let previousChargeHistory = []; 
 let previousFreeChargerCount = 0;
-let initialRun = config.silentStart; // true will silence the first run when starting the service. configure in config.js
+let initialRun = true;
 function logWithTimestamp(message) {
     const timeDate = new Date(new Date().toLocaleString('en-US', { timeZone: config.timeZone }));
     const hours = String(timeDate.getHours()).padStart(2, '0');
@@ -134,16 +135,86 @@ async function checkChargerAvailability() {
                 console.log(message);
                 await notifyTeams(message + "\n\n" + allChargerStatuses).catch(err => console.error("Failed to send Teams notification:", err));
             }
-        } else {
-            logWithTimestamp("Initial run, notifications are silenced.");
-            initialRun = false;  // Reset the flag after the initial run
         }
+        initialRun = false;  // Reset the flag after the initial run
+
         previousFreeChargerCount = freeChargersCount;
 
     } catch (error) {
         console.error("Failed to fetch charger data:", error);
     }
 }
+
+
+let lastChargeDate;  // Add this line at the top of your script, outside any function.
+
+async function getChargeHistory() {
+    logWithTimestamp("Fetching charge history...");
+
+    try {
+        const response = await axios.get("https://api.zaptec.com/api/chargehistory", {
+            headers: {
+                "Authorization": `Bearer ${bearerToken}`,
+                "accept": "application/json"
+            }
+        });
+
+        const currentChargeHistory = response.data.Data;  
+
+        // If this is the initial run or the charge history has changed since the last run
+        if (!lastChargeDate || (lastChargeDate && lastChargeDate !== currentChargeHistory[0].StartDateTime)) {
+
+            // Update the last charge date
+            lastChargeDate = currentChargeHistory[0].StartDateTime;
+
+            let historyEntries = Math.min(currentChargeHistory.length, 1);
+            for (let i = 0; i < historyEntries; i++) {
+                const charge = currentChargeHistory[i];
+
+                // Convert StartDateTime to a JavaScript Date object and adjust for timezone difference
+                var startDate = new Date(charge.StartDateTime);
+                startDate.setHours(startDate.getHours() + 2);
+
+                // Convert EndDateTime to a JavaScript Date object and adjust for timezone difference
+                var endDate = new Date(charge.EndDateTime);
+                endDate.setHours(endDate.getHours() + 2);
+
+                // Format the start date and time using 24-hour format
+                const formattedStartDate = new Intl.DateTimeFormat(undefined, {
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                }).format(startDate);
+
+                // Format the end date and time using 24-hour format
+                const formattedEndDate = new Intl.DateTimeFormat(undefined, {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                }).format(endDate);
+
+                // Log the formatted start and end date and time, and the energy consumed
+                logWithTimestamp(`${formattedStartDate} - ${formattedEndDate}: ${charge.Energy} kWh`);
+                const message = `${formattedStartDate} - ${formattedEndDate}: ${charge.Energy} kWh`;
+
+                if (config.showChargingdata) {
+                    await notifyTeams("Your charging session is complete:"  + "\n" + message + "\n\n")
+                    .catch(err => console.error("Failed to send Teams notification:", err));
+                }
+            }
+        }
+
+        previousChargeHistory = currentChargeHistory; // Update the previous charge history
+        logWithTimestamp(`Fetched charge history for ${currentChargeHistory.length} entries.`);
+
+    } catch (error) {
+        console.error("Failed to fetch charge history:", error);
+    }
+}
+
+
 
 async function notifyTeams(message) {
     
@@ -193,5 +264,6 @@ async function notifyTeams(message) {
 module.exports = {
     refreshBearerToken,
     checkChargerAvailability,
+    getChargeHistory
 };
 //@Created By Pierre Gode
