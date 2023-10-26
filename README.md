@@ -1,9 +1,8 @@
 # ZaptecTeamsNotifier
 
 
-![image](https://github.com/PierreGode/ZaptecTeamsNotifier/assets/8579922/6140f82d-a815-4175-88ae-9ca69a14af5f)
+![image](https://github.com/PierreGode/ZaptecTeamsNotifier/assets/8579922/4045aa5a-f37a-4df1-8192-ee26e2a8e7b2)
 
-![image](https://github.com/PierreGode/ZaptecTeamsNotifier/assets/8579922/88e271a3-39b9-4cc6-b285-85ff825259e9)
 
 
 Send notifications of availible Zaptec chargers that are availible in your Zaptec account to Teams
